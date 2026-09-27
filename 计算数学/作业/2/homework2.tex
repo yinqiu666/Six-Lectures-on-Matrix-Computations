@@ -1,0 +1,185 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{bm}
+\usepackage{ctex} % 用于支持中文
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{proofpart}{证明}
+
+\begin{document}
+
+\section*{矩阵计算与特征值问题解答}
+
+\subsection*{11. 不可约 Hessenberg 矩阵的判定}
+\textbf{证明：} 
+设 \(Q \in \mathbb{R}^{n \times n}\) 为正交矩阵，\(A \in \mathbb{R}^{n \times n}\)，定义 \(K = [Qe_1, AQe_1, \dots, A^{n-1}Qe_1] \in \mathbb{R}^{n \times n}\)。
+已知 \(Q^\top A Q = H\)，则 \(A = Q H Q^\top\)。
+代入 \(K\) 的定义：
+\[
+ K = [Qe_1, (Q H Q^\top) Qe_1, \dots, (Q H Q^\top)^{n-1} Qe_1] 
+\]
+\[
+ K = [Qe_1, Q H e_1, \dots, Q H^{n-1} e_1] = Q [e_1, H e_1, \dots, H^{n-1} e_1] 
+\]
+令 \(R = [e_1, H e_1, \dots, H^{n-1} e_1]\)，则 \(Q^\top K = R\)。
+
+\textbf{必要性：} 若 \(H\) 是不可约上 Hessenberg 矩阵，则 \(H\) 的次对角线元素 \(h_{i+1,i} \neq 0\) (\(i=1,\dots,n-1\))。可以证明 \(R\) 是上三角矩阵，且其对角元为 \(\prod_{k=1}^{i-1} h_{k+1,k} \neq 0\)，因此 \(R\) 是非奇异上三角矩阵。
+
+\textbf{充分性：} 若 \(R = Q^\top K\) 是非奇异上三角矩阵。由于 \(Q\) 正交，\(K\) 的列向量是 Krylov 序列。若 \(H\) 是可约的，则存在 \(k < n\) 使得 \(h_{k+1,k} = 0\)。这将导致 \(R\) 的第 \(k+1\) 列及之后的列在对角线下方出现零元素，进而使 \(R\) 奇异，矛盾。因此 \(H\) 必须不可约。
+
+\subsection*{12. Hessenberg 矩阵乘积与 Givens 变换}
+\textbf{(1) 证明：} 
+设 \(A, B\) 为上 Hessenberg 矩阵，即当 \(i > j+1\) 时，\(a_{ij}=0, b_{ij}=0\)。
+\(C = AB\)，则 \(c_{ij} = \sum_{k=1}^n a_{ik} b_{kj}\)。
+若 \(i > j+2\)，对于任意 \(k\)：
+\begin{itemize}
+    \item 若 \(k < i-1\)，则 \(b_{kj}\) 可能非零，但 \(a_{ik}=0\)（因为 \(i > k+1\)）。
+    \item 若 \(k \ge i-1\)，由于 \(i > j+2 \implies k \ge i-1 > j+1\)，则 \(b_{kj}=0\)（因为 \(k > j+1\)）。
+\end{itemize}
+因此 \(c_{ij} = 0\) 对于所有 \(i > j+2\) 成立，即 \(C\) 具有下带宽 2。
+
+\textbf{(2) 算法说明：}
+对于具有下带宽 2 的矩阵 \(A\)，可以通过一系列 Givens 变换将其化为上 Hessenberg 矩阵。具体地，对每一列 \(j = 1, 2, \dots, n-2\)，构造 Givens 旋转矩阵 \(G_j\) 作用于行 \(j+1\) 和 \(j+2\)，以消去 \(A_{j+2, j}\) 元素。由于 \(A\) 的初始下带宽为 2，这些变换只会影响局部的行和列，保持上 Hessenberg 结构。最终得到 \(H = G_{n-2}^\top \dots G_1^\top A G_1 \dots G_{n-2}\)。
+
+\subsection*{13. 隐式 QR 迭代的等式证明}
+\textbf{证明：}
+已知 \(H_k - \mu_k I = U_k R_k\)，\(H_{k+1} = R_k U_k + \mu_k I\)。
+由此可得 \(H_{k+1} = R_k U_k + \mu_k I = U_k^\top (U_k R_k U_k) + \mu_k I = U_k^\top (H_k - \mu_k I) U_k + \mu_k I = U_k^\top H_k U_k\)。
+这表明 \(H_{k+1} = U_k^\top H_k U_k\)，即 \(H_k U_k = U_k H_{k+1}\)。
+递推可得：\(H_j U_j U_{j+1} \dots U_k = U_j U_{j+1} \dots U_k H_{k+1}\)。
+考虑乘积 \((U_0 \dots U_j)(R_j \dots R_0)\)：
+\begin{align*}
+    (U_0 \dots U_j)(R_j \dots R_0) &= (U_0 \dots U_{j-1}) U_j R_j (R_{j-1} \dots R_0) \\
+    &= (U_0 \dots U_{j-1}) (H_{j+1} - \mu_j I) (R_{j-1} \dots R_0) \\
+    &= (U_0 \dots U_{j-1}) (U_j^\top H_j U_j - \mu_j I) (R_{j-1} \dots R_0) \\
+    &= (U_0 \dots U_{j-1}) U_j^\top (H_j - \mu_j I) U_j (R_{j-1} \dots R_0)
+\end{align*}
+利用 \(U_j R_j = H_j - \mu_j I\) 以及 \(R_j = U_j^\top (H_j - \mu_j I)\)，代入上式：
+\begin{align*}
+    &= (U_0 \dots U_{j-1}) U_j^\top (H_j - \mu_j I) (H_j - \mu_j I) (R_{j-1} \dots R_0) \\
+    &= (U_0 \dots U_{j-1}) U_j^\top (H_j - \mu_j I)^2 (R_{j-1} \dots R_0)
+\end{align*}
+重复此过程，最终可得：
+\[
+ (U_0 \dots U_j)(R_j \dots R_0) = (H - \mu_0 I)(H - \mu_1 I) \dots (H - \mu_j I) 
+\]
+
+\subsection*{14. 单步位移 QR 迭代}
+\textbf{(1) 证明：}
+设 \(H\) 为不可约上 Hessenberg 矩阵，\(\mu\) 不是 \(H\) 的特征值，则 \(H - \mu I\) 可逆。
+\(H - \mu I = QR\)，其中 \(Q\) 正交，\(R\) 非奇异上三角。
+\(H_1 = RQ + \mu I = Q^\top (H - \mu I) Q + \mu I = Q^\top H Q\)。
+由于 \(Q^\top = (H - \mu I) R^{-1}\)，且 \(R^{-1}\) 是上三角矩阵，\(H - \mu I\) 是上 Hessenberg 矩阵。
+根据 Hessenberg 矩阵乘以上三角矩阵保持上 Hessenberg 形式（类似第12题的结论），\(Q^\top\) 是上 Hessenberg 矩阵，从而 \(Q\) 是下 Hessenberg 矩阵。
+又因为 \(Q\) 是正交矩阵，\(Q^\top = Q^{-1}\)，所以 \(Q\) 也是上 Hessenberg 矩阵。
+因此 \(H_1 = Q^\top H Q\) 是两个上 Hessenberg 矩阵的乘积，由第12题(1)可知 \(H_1\) 具有下带宽 2。结合 \(Q\) 和 \(H\) 的结构，可证明 \(H_1\) 是不可约上 Hessenberg 矩阵。
+
+\textbf{(2) 隐式 Q 定理算法设计：}
+1. 计算 \(H\) 的第一个列向量与位移的关系：\(x = (H - \mu I) e_1\)。
+2. 构造 Givens 旋转 \(G_1\)，使得 \(G_1 x = \alpha e_1\)。\(G_1\) 仅作用于第1、2行。
+3. 对 \(k = 1, 2, \dots, n-1\)，构造 Givens 旋转 \(G_{k+1}\) 消去由前一步变换引入的次对角线以下的元素（追逐 bulge）。即 \(G_{k+1}\) 作用于行 \(k+1, k+2\)，使得 \(H\) 逐渐恢复上 Hessenberg 形式。
+4. 最终得到 \(H_1 = G_{n}^\top \dots G_1^\top H G_1 \dots G_n\)，且 \(Q = G_1 G_2 \dots G_n\)。
+
+\subsection*{15. 基于特征向量的 Hessenberg 化}
+\textbf{说明：}
+设 \((\lambda, x)\) 为 \(H\) 的特征对，即 \(Hx = \lambda x\)，且 \(\|x\|_2 = 1\)。
+构造正交矩阵 \(P_0\)，使得 \(P_0 e_1 = x\)（例如通过 Householder 变换）。
+令 \(P_0 = [x, V]\)，其中 \(V \in \mathbb{R}^{n \times (n-1)}\) 且 \(V^\top x = 0\)。
+计算 \(P_0^\top H P_0 = \begin{bmatrix} x^\top H x & x^\top H V \\ V^\top H x & V^\top H V \end{bmatrix} = \begin{bmatrix} \lambda & x^\top H V \\ 0 & V^\top H V \end{bmatrix}\)。
+设 \(H_0 = V^\top H V \in \mathbb{R}^{(n-1) \times (n-1)}\)，它可能不是上 Hessenberg 矩阵。
+由于 \(H\) 是上 Hessenberg 矩阵，\(H_0\) 也是上 Hessenberg 矩阵（因为它是 \(H\) 的子矩阵）。因此，直接取 \(P = P_0\) 即可得到所需的形式，其中 \(H_1 = H_0\) 已经是上 Hessenberg 矩阵。
+
+\subsection*{16. Kronecker 积的特征值}
+\textbf{证明：}
+利用 Schur 分解，存在酉矩阵 \(U \in \mathbb{C}^{m \times m}\) 和 \(V \in \mathbb{C}^{n \times n}\)，使得 \(A = U T_A U^H\)，\(B = V T_B V^H\)，其中 \(T_A, T_B\) 分别为上三角矩阵，其对角元为 \(A, B\) 的特征值。
+考虑 Kronecker 积：
+\[
+ A \otimes B = (U T_A U^H) \otimes (V T_B V^H) = (U \otimes V) (T_A \otimes T_B) (U \otimes V)^H 
+\]
+由于 \(U \otimes V\) 是酉矩阵，\(A \otimes B\) 与 \(T_A \otimes T_B\) 相似。
+\(T_A \otimes T_B\) 是上三角矩阵，其对角元为 \((T_A)_{ii} (T_B)_{jj} = \lambda_i \mu_j\)。
+因此，\(A \otimes B\) 的特征值（计代数重数）为 \(\{\lambda_i \mu_j : \lambda_i \in \lambda(A), \mu_j \in \lambda(B)\}\)。
+
+\subsection*{17. 实矩阵复特征对的块对角化}
+\textbf{算法设计：}
+设 \(A = \begin{bmatrix} \alpha_{11} & v^\top \\ 0 & T \end{bmatrix} \in \mathbb{R}^{3 \times 3}\)，其中 \(T\) 有复共轭特征值。
+1. 计算 \(T\) 的复特征向量 \(z = x + iy\)，对应特征值 \(\lambda = a + ib\) (\(b \neq 0\))。
+2. 构造实正交矩阵 \(Q_1 = [\text{Re}(z), \text{Im}(z)] = [x, y]\)，使得 \(Q_1^\top T Q_1 = \begin{bmatrix} a & b \\ -b & a \end{bmatrix}\)。
+3. 构造 3 阶正交矩阵 \(Q = \begin{bmatrix} 1 & 0 \\ 0 & Q_1 \end{bmatrix}\)。
+4. 计算 \(Q^\top A Q = \begin{bmatrix} \alpha_{11} & v^\top Q_1 \\ Q_1^\top 0 & Q_1^\top T Q_1 \end{bmatrix} = \begin{bmatrix} \alpha_{11} & u^\top \\ 0 & \tilde{T} \end{bmatrix}\)，其中 \(\tilde{T} = Q_1^\top T Q_1\) 具有复特征值 \(\lambda(T)\)，且 \(u = Q_1^\top v\)。
+
+\subsection*{18. 行列式恒等式}
+\textbf{(1) 证明：}
+考虑分块矩阵 \(\begin{bmatrix} I & A \\ B & I \end{bmatrix}\)。
+通过行变换和列变换可得：
+\[
+ \det \begin{bmatrix} I & A \\ B & I \end{bmatrix} = \det(I) \det(I - BA) = \det(I - BA) 
+\]
+同时，利用 Schur 补：
+\[
+ \det \begin{bmatrix} I & A \\ B & I \end{bmatrix} = \det(I) \det(I - AB) = \det(I - AB) 
+\]
+因此 \(\det(I - AB) = \det(I - BA)\)。
+对于一般 \(\lambda\)，有 \(\det(\lambda I - AB) = \lambda^n \det(I - \frac{1}{\lambda} AB) = \lambda^n \det(I - \frac{1}{\lambda} BA) = \det(\lambda I - BA)\)。
+
+\textbf{(2) 证明：}
+由 (1) 的结论，对于任意 \(\lambda \neq 0\)，有 \(\det(\lambda I_m - AB) = \det(\lambda I_n - BA)\)。
+两边同时乘以 \(\lambda^{n-m}\)：
+\[
+ \lambda^{n-m} \det(\lambda I_m - AB) = \lambda^{n-m} \det(\lambda I_n - BA) 
+\]
+左边 \(= \lambda^n \det(\lambda I_m - AB)\)，右边 \(= \lambda^m \det(\lambda I_n - BA)\)。
+由于两边都是关于 \(\lambda\) 的多项式，该等式对所有 \(\lambda\) 成立。
+
+\subsection*{19. 对称矩阵的圆盘定理}
+\textbf{证明：}
+设 \(A\) 为对称矩阵，\(\lambda\) 为 \(A\) 的任意特征值，\(x\) 为对应的特征向量，\(\|x\|_2 = 1\)。
+取 \(x\) 中绝对值最大的分量为 \(x_k\)，即 \(|x_k| = \max_i |x_i|\)，则 \(|x_k| > 0\)。
+由 \(Ax = \lambda x\)，第 \(k\) 个分量为：
+\[
+ \lambda x_k = \sum_{j=1}^n a_{kj} x_j = a_{kk} x_k + \sum_{j \neq k} a_{kj} x_j 
+\]
+\[
+ (\lambda - a_{kk}) x_k = \sum_{j \neq k} a_{kj} x_j 
+\]
+\[
+ |\lambda - a_{kk}| |x_k| \le \sum_{j \neq k} |a_{kj}| |x_j| \le |x_k| \sum_{j \neq k} |a_{kj}| 
+\]
+由于 \(|x_k| > 0\)，两边同除以 \(|x_k|\)，得：
+\[
+ |\lambda - a_{kk}| \le \sum_{j \neq k} |a_{kj}| 
+\]
+即 \(\lambda \in D_k = \{ z \in \mathbb{R} : |z - a_{kk}| \le \sum_{j \neq k} |a_{kj}| \}\)。
+因此，每个圆盘 \(D_i\) 中至少含有 \(A\) 的一个特征值。
+
+\subsection*{20. 复矩阵与实块矩阵的关系}
+\textbf{(1) 证明：}
+\(C = A + iB\) 是 Hermite 矩阵 \(\iff C^H = C \iff (A + iB)^H = A + iB \iff A^\top - iB^\top = A + iB \iff A = A^\top\) 且 \(B = -B^\top\)。
+\(M = \begin{bmatrix} A & -B \\ B & A \end{bmatrix}\) 是对称矩阵 \(\iff M^\top = M \iff \begin{bmatrix} A^\top & B^\top \\ -B^\top & A^\top \end{bmatrix} = \begin{bmatrix} A & -B \\ B & A \end{bmatrix} \iff A = A^\top\) 且 \(B = -B^\top\)。
+因此条件等价。
+
+\textbf{(2) 证明：}
+设 \(\lambda \in \lambda(C)\) 是实数，\(z = x + iy \in \mathbb{C}^n\) 是对应的特征向量，\(z \neq 0\)。
+\(Cz = \lambda z \iff (A + iB)(x + iy) = \lambda(x + iy)\)。
+分离实部和虚部：
+\[
+ Ax - By = \lambda x 
+\]
+\[
+ Bx + Ay = \lambda y 
+\]
+可以写成矩阵形式：
+\[
+ \begin{bmatrix} A & -B \\ B & A \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = \lambda \begin{bmatrix} x \\ y \end{bmatrix} 
+\]
+即 \(M \begin{bmatrix} x \\ y \end{bmatrix} = \lambda \begin{bmatrix} x \\ y \end{bmatrix}\)。
+由于 \(z \neq 0\)，\(x\) 和 \(y\) 不全为 0，因此 \(\begin{bmatrix} x \\ y \end{bmatrix} \neq 0\) 是 \(M\) 对应于 \(\lambda\) 的特征向量。
+
+\textbf{(3) 讨论：}
+若 \(\lambda \in \mathbb{C}\) 是 \(C\) 的复特征值（非实数），对应的特征向量为 \(z = x + iy\)。
+则 \(\bar{\lambda}\) 也是 \(C\) 的特征值（因为 \(C\) 是 Hermite 矩阵），且对应的特征向量为 \(\bar{z} = x - iy\)。
+由 \(Cz = \lambda z\) 和 \(C\bar{z} = \bar{\lambda} \bar{z}\)，可以推导出 \(M\) 的特征值为 \(\lambda, \bar{\lambda}\)，对应的特征向量为 \(\begin{bmatrix} x \\ y \end{bmatrix}\) 和 \(\begin{bmatrix} x \\ -y \end{bmatrix}\) 等相关的线性组合。一般情况下，\(M\) 的特征值是 \(C\) 的特征值的实部和虚部组合，\(M\) 的特征向量与 \(C\) 的复特征向量的实部和虚部有关。
+
+\end{document}

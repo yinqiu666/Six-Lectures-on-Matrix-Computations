@@ -1,0 +1,805 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\renewcommand{\top}{\mathrm{T}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+
+\newtheorem{lemma}{引理}
+\newtheorem{theorem}{定理}
+\newenvironment{solution}{\par\noindent\textbf{解：}}{\par}
+
+\begin{document}
+
+\section*{第一次作业解答}
+
+\begin{enumerate}
+
+\item 设
+\[
+x=(1,0,4,6,3,4)^{\top}.
+\]
+求一个实 Householder 变换 \(H\in\R^{6\times 6}\) 和一个正数 \(\alpha\)，使得
+\[
+Hx=(1,\alpha,4,6,0,0)^{\top}.
+\]
+
+\begin{solution}
+Householder 变换保持向量 \(2\) 范数，因此
+\[
+\norm{Hx}_2=\norm{x}_2.
+\]
+而
+\[
+\norm{x}_2^2=1^2+0^2+4^2+6^2+3^2+4^2=78.
+\]
+目标向量
+\[
+y=(1,\alpha,4,6,0,0)^{\top}
+\]
+的范数平方为
+\[
+\norm{y}_2^2=1+\alpha^2+16+36=53+\alpha^2.
+\]
+于是
+\[
+53+\alpha^2=78,
+\]
+故
+\[
+\alpha^2=25.
+\]
+因为 \(\alpha>0\)，所以
+\[
+\alpha=5.
+\]
+
+下面构造 Householder 变换。令
+\[
+z=(1,0,4,6)^{\top},\qquad w=(1,5,4,6)^{\top}.
+\]
+取
+\[
+v=z-w=(0,-5,0,0)^{\top}.
+\]
+令
+\[
+u=\frac{v}{\norm{v}_2}=(0,-1,0,0)^{\top}.
+\]
+定义
+\[
+\tilde H=I_4-2uu^{\top}
+=
+\begin{pmatrix}
+1&0&0&0\\
+0&-1&0&0\\
+0&0&1&0\\
+0&0&0&1
+\end{pmatrix}.
+\]
+则
+\[
+\tilde H z=w.
+\]
+于是取
+\[
+H=
+\begin{pmatrix}
+\tilde H&0\\
+0&I_2
+\end{pmatrix}
+=
+\diag(1,-1,1,1,1,1).
+\]
+验证：
+\[
+Hx=(1,5,4,6,0,0)^{\top}.
+\]
+因此
+\[
+\boxed{\alpha=5,\qquad H=\diag(1,-1,1,1,1,1).}
+\]
+\end{solution}
+
+\item 设
+\[
+x=(1,1-2\ii,2+\ii,2+\ii,0)^{\top},
+\]
+求一个复 Householder 变换 \(H\in\C^{5\times 5}\) 和一个数 \(\alpha\in\C\)，使得
+\[
+Hx=(\alpha,0,1,2+\ii,0)^{\top}.
+\]
+
+\begin{solution}
+复 Householder 变换保持复欧几里得范数，因此
+\[
+\norm{Hx}_2=\norm{x}_2.
+\]
+计算
+\[
+\norm{x}_2^2=1+\abs{1-2\ii}^2+\abs{2+\ii}^2+\abs{2+\ii}^2
+=1+5+5+5=16.
+\]
+目标向量
+\[
+y=(\alpha,0,1,2+\ii,0)^{\top}
+\]
+满足
+\[
+\norm{y}_2^2=\abs{\alpha}^2+1+5=\abs{\alpha}^2+6.
+\]
+于是
+\[
+\abs{\alpha}^2+6=16,
+\]
+故
+\[
+\abs{\alpha}^2=10.
+\]
+可取
+\[
+\alpha=\sqrt{10}.
+\]
+
+令
+\[
+z=x,\qquad w=(\sqrt{10},0,1,2+\ii,0)^{\top},
+\]
+并取
+\[
+v=z-w.
+\]
+复 Householder 矩阵为
+\[
+H=I-2\frac{vv^{H}}{v^{H}v},
+\]
+其中 \(v^{H}\) 表示共轭转置。由 Householder 变换性质，
+\[
+Hz=w.
+\]
+因此
+\[
+\boxed{
+H=I-2\frac{vv^{H}}{v^{H}v},\qquad
+v=(1-\sqrt{10},\,1-2\ii,\,1+\ii,\,0,\,0)^{\top},
+}
+\]
+并且
+\[
+\boxed{\alpha=\sqrt{10}.}
+\]
+若取相反符号，则 \(\alpha=-\sqrt{10}\)，对应
+\[
+v=x-(-\sqrt{10},0,1,2+\ii,0)^{\top}.
+\]
+\end{solution}
+
+\item 确定 \(c=\cos\theta\) 和 \(s=\sin\theta\)，使得
+\[
+\begin{pmatrix}
+c&s\\
+-s&c
+\end{pmatrix}
+\begin{pmatrix}
+5\\
+12
+\end{pmatrix}
+=
+\alpha
+\begin{pmatrix}
+1\\
+1
+\end{pmatrix},
+\qquad \alpha\in\R.
+\]
+
+\begin{solution}
+设
+\[
+\begin{pmatrix}
+c&s\\
+-s&c
+\end{pmatrix}
+\begin{pmatrix}
+5\\
+12
+\end{pmatrix}
+=
+\begin{pmatrix}
+5c+12s\\
+-5s+12c
+\end{pmatrix}
+=
+\begin{pmatrix}
+\alpha\\
+\alpha
+\end{pmatrix}.
+\]
+于是
+\[
+\begin{cases}
+5c+12s=\alpha,\\
+-5s+12c=\alpha.
+\end{cases}
+\]
+两式相减得
+\[
+5c+12s+5s-12c=0,
+\]
+即
+\[
+17s-7c=0.
+\]
+因此
+\[
+17s=7c.
+\]
+又因为
+\[
+c^2+s^2=1,
+\]
+将 \(s=\frac{7}{17}c\) 代入，得
+\[
+c^2+\frac{49}{289}c^2=1,
+\]
+即
+\[
+\frac{338}{289}c^2=1.
+\]
+所以
+\[
+c^2=\frac{289}{338}.
+\]
+因此
+\[
+c=\pm \frac{17}{\sqrt{338}},\qquad
+s=\pm \frac{7}{\sqrt{338}}.
+\]
+由于 \(17s=7c\)，\(c\) 与 \(s\) 同号。因此两组解为
+\[
+\boxed{
+c=\frac{17}{\sqrt{338}},\qquad
+s=\frac{7}{\sqrt{338}},
+}
+\]
+或
+\[
+\boxed{
+c=-\frac{17}{\sqrt{338}},\qquad
+s=-\frac{7}{\sqrt{338}}.
+}
+\]
+对应
+\[
+\alpha=5c+12s.
+\]
+若取第一组，则
+\[
+\alpha=\frac{169}{\sqrt{338}};
+\]
+若取第二组，则
+\[
+\alpha=-\frac{169}{\sqrt{338}}.
+\]
+\end{solution}
+
+\item 设 \(L\in\R^{m\times n}\)（\(m\geqslant n\)）是下三角阵，说明如何确定 Householder 矩阵
+\(H_1,H_2,\dots,H_n\in\R^{m\times m}\)，使得
+\[
+H_n\cdots H_2H_1L=
+\begin{pmatrix}
+L_1\\
+O
+\end{pmatrix},
+\]
+其中 \(L_1\in\R^{n\times n}\) 是下三角矩阵。
+
+\begin{solution}
+设
+\[
+L=
+\begin{pmatrix}
+l_{11}&0&\cdots&0\\
+l_{21}&l_{22}&\cdots&0\\
+\vdots&\vdots&\ddots&\vdots\\
+l_{m1}&l_{m2}&\cdots&l_{mn}
+\end{pmatrix}.
+\]
+目标是逐列消去第 \(n+1\) 行到第 \(m\) 行的元素，同时保持前 \(n\) 行为下三角形式。
+
+第 \(1\) 步：考察第一列从第 \(2\) 行到第 \(m\) 行的元素
+\[
+\begin{pmatrix}
+l_{21}\\
+l_{31}\\
+\vdots\\
+l_{m1}
+\end{pmatrix}.
+\]
+构造 Householder 矩阵 \(\widetilde H_1\in\R^{(m-1)\times(m-1)}\)，使得
+\[
+\widetilde H_1
+\begin{pmatrix}
+l_{21}\\
+l_{31}\\
+\vdots\\
+l_{m1}
+\end{pmatrix}
+=
+\begin{pmatrix}
+*\\
+0\\
+\vdots\\
+0
+\end{pmatrix}.
+\]
+令
+\[
+H_1=
+\begin{pmatrix}
+1&0\\
+0&\widetilde H_1
+\end{pmatrix}
+\in\R^{m\times m}.
+\]
+则 \(H_1L\) 的第一列只有前两个元素可能非零，其余为零。
+
+第 \(2\) 步：考察第二列从第 \(3\) 行到第 \(m\) 行的元素。构造
+\(\widetilde H_2\in\R^{(m-2)\times(m-2)}\)，使得这些元素被消去。令
+\[
+H_2=
+\begin{pmatrix}
+I_2&0\\
+0&\widetilde H_2
+\end{pmatrix}
+\in\R^{m\times m}.
+\]
+由于 \(H_2\) 只作用在第 \(3\) 到第 \(m\) 行，不会破坏第一列已经消好的零，也不会破坏下三角结构。
+
+依此类推。第 \(k\) 步消去第 \(k\) 列中第 \(k+1\) 到第 \(m\) 行的元素，构造
+\[
+H_k=
+\begin{pmatrix}
+I_k&0\\
+0&\widetilde H_k
+\end{pmatrix},
+\qquad
+\widetilde H_k\in\R^{(m-k)\times(m-k)}.
+\]
+经过 \(n\) 步后得到
+\[
+H_nH_{n-1}\cdots H_1L=
+\begin{pmatrix}
+L_1\\
+O
+\end{pmatrix},
+\]
+其中 \(L_1\in\R^{n\times n}\) 是下三角矩阵。
+
+因此算法为：
+\[
+\boxed{
+\text{对 }k=1,2,\dots,n,\text{ 用 Householder 变换消去第 }k\text{ 列第 }k+1,\dots,m\text{ 行元素。}
+}
+\]
+\end{solution}
+
+\item 设 \(H\in\C^{n\times n}\) 是上 Hessenberg 矩阵，\(R\in\C^{n\times n}\) 是上三角矩阵。证明：\(HR\) 是上 Hessenberg 矩阵。
+
+\begin{solution}
+上 Hessenberg 矩阵定义为
+\[
+H_{ij}=0,\qquad i>j+1.
+\]
+上三角矩阵满足
+\[
+R_{ij}=0,\qquad i>j.
+\]
+记
+\[
+C=HR.
+\]
+需要证明
+\[
+C_{ij}=0,\qquad i>j+1.
+\]
+由矩阵乘法，
+\[
+C_{ij}=\sum_{k=1}^n H_{ik}R_{kj}.
+\]
+若 \(R_{kj}\neq 0\)，则必须有
+\[
+k\leqslant j.
+\]
+因此
+\[
+C_{ij}=\sum_{k=1}^{j} H_{ik}R_{kj}.
+\]
+若 \(i>j+1\)，则对任意 \(k\leqslant j\)，都有
+\[
+i>j+1>j\geqslant k,
+\]
+即
+\[
+i>k+1.
+\]
+由于 \(H\) 是上 Hessenberg 矩阵，
+\[
+H_{ik}=0,\qquad i>k+1.
+\]
+所以对每个 \(k\leqslant j\)，都有 \(H_{ik}=0\)，从而
+\[
+C_{ij}=0.
+\]
+因此
+\[
+(HR)_{ij}=0,\qquad i>j+1.
+\]
+所以 \(HR\) 是上 Hessenberg 矩阵。
+\[
+\boxed{HR\text{ 是上 Hessenberg 矩阵}.}
+\]
+\end{solution}
+
+\item 设 \(A\in\C^{n\times n}\)，\(x\in\C^n\)，
+\[
+X=[x,Ax,\dots,A^{n-1}x].
+\]
+证明：如果 \(X\) 非奇异，则 \(X^{-1}AX\) 是上 Hessenberg 矩阵。
+
+\begin{solution}
+记
+\[
+X=[x_1,x_2,\dots,x_n],
+\]
+其中
+\[
+x_k=A^{k-1}x,\qquad k=1,2,\dots,n.
+\]
+因为 \(X\) 非奇异，所以 \(\{x_1,\dots,x_n\}\) 构成 \(\C^n\) 的一组基。
+
+计算
+\[
+AX=[Ax,A^2x,\dots,A^nx].
+\]
+由 Cayley--Hamilton 定理，\(A^n\) 可表示为
+\[
+A^nx=c_1x+c_2Ax+\cdots+c_nA^{n-1}x.
+\]
+因此
+\[
+AX=[x_2,x_3,\dots,x_n,c_1x_1+\cdots+c_nx_n].
+\]
+于是
+\[
+X^{-1}AX
+=
+X^{-1}[x_2,x_3,\dots,x_n,c_1x_1+\cdots+c_nx_n].
+\]
+因为
+\[
+X^{-1}x_k=e_k,\qquad k=1,2,\dots,n,
+\]
+所以
+\[
+X^{-1}AX
+=
+[e_2,e_3,\dots,e_n,c],
+\]
+其中
+\[
+c=(c_1,c_2,\dots,c_n)^{\top}.
+\]
+因此
+\[
+X^{-1}AX=
+\begin{pmatrix}
+0&0&\cdots&0&c_1\\
+1&0&\cdots&0&c_2\\
+0&1&\cdots&0&c_3\\
+\vdots&\vdots&\ddots&\vdots&\vdots\\
+0&0&\cdots&1&c_n
+\end{pmatrix}.
+\]
+这个矩阵只有次对角线及其以上可能非零，因此是上 Hessenberg 矩阵。
+\[
+\boxed{X^{-1}AX\text{ 是上 Hessenberg 矩阵}.}
+\]
+\end{solution}
+
+\item 设 \(H\in\C^{n\times n}\) 是可对角化的不可约上 Hessenberg 矩阵。证明：\(H\) 没有重特征值。
+
+\begin{solution}
+反证。设 \(H\) 有重特征值 \(\lambda\)，重数至少为 \(2\)。
+
+因为 \(H\) 可对角化，所以对应于 \(\lambda\) 的特征子空间维数至少为 \(2\)。设
+\[
+Hx=\lambda x,\qquad Hy=\lambda y,
+\]
+其中 \(x,y\) 线性无关。令
+\[
+z=\alpha x+\beta y\neq 0,
+\]
+则
+\[
+Hz=\lambda z.
+\]
+因此对应于 \(\lambda\) 的特征子空间至少是二维的。
+
+另一方面，对于不可约上 Hessenberg 矩阵，若 \(\lambda\) 是特征值，则其几何重数为 \(1\)。这是因为不可约上 Hessenberg 矩阵的次对角元均非零。设
+\[
+(H-\lambda I)v=0.
+\]
+若 \(v\neq 0\)，取 \(v\) 的第一个非零分量 \(v_k\)。由第 \(k-1\) 个方程
+\[
+h_{k-1,k}v_k+h_{k-1,k-1}v_{k-1}+\cdots=0
+\]
+以及前面的零分量可推出 \(v_{k-1}=0\)，矛盾。因此特征子空间维数为 \(1\)。
+
+于是对应于 \(\lambda\) 的特征子空间维数只能为 \(1\)，与可对角化且有重特征值矛盾。
+
+因此 \(H\) 没有重特征值。
+\[
+\boxed{H\text{ 没有重特征值}.}
+\]
+\end{solution}
+
+\item 设 \(H\in\R^{n\times n}\) 是一个不可约的上 Hessenberg 矩阵。证明：存在一个对角阵
+\(D\in\R^{n\times n}\)，使得 \(D^{-1}HD\) 的次对角元均为 \(1\)，并求
+\[
+\kappa_2(D)=\norm{D}_2\norm{D^{-1}}_2.
+\]
+
+\begin{solution}
+设
+\[
+H=
+\begin{pmatrix}
+h_{11}&h_{12}&\cdots&h_{1n}\\
+h_{21}&h_{22}&\cdots&h_{2n}\\
+0&h_{32}&\cdots&h_{3n}\\
+\vdots&\ddots&\ddots&\vdots\\
+0&\cdots&0&h_{n,n-1}&h_{nn}
+\end{pmatrix}.
+\]
+不可约意味着
+\[
+h_{i+1,i}\neq 0,\qquad i=1,2,\dots,n-1.
+\]
+取对角矩阵
+\[
+D=\diag(d_1,d_2,\dots,d_n),
+\]
+其中 \(d_1=1\)，并递推取
+\[
+d_{i+1}=\frac{d_i}{h_{i+1,i}},\qquad i=1,2,\dots,n-1.
+\]
+即
+\[
+d_1=1,\qquad
+d_2=\frac{1}{h_{21}},\qquad
+d_3=\frac{1}{h_{21}h_{32}},\qquad
+\dots,\qquad
+d_n=\frac{1}{h_{21}h_{32}\cdots h_{n,n-1}}.
+\]
+计算 \(D^{-1}HD\) 的次对角元。因为
+\[
+(D^{-1}HD)_{i+1,i}
+=
+d_{i+1}^{-1}h_{i+1,i}d_i
+=
+\frac{d_i}{d_{i+1}}h_{i+1,i}.
+\]
+由 \(d_{i+1}=d_i/h_{i+1,i}\)，得
+\[
+\frac{d_i}{d_{i+1}}=h_{i+1,i}.
+\]
+因此
+\[
+(D^{-1}HD)_{i+1,i}=h_{i+1,i}h_{i+1,i}^{-1}=1.
+\]
+所以 \(D^{-1}HD\) 的次对角元均为 \(1\)。
+
+下面求 \(\kappa_2(D)\)。因为 \(D\) 是对角矩阵，
+\[
+\norm{D}_2=\max_{1\leqslant i\leqslant n}\abs{d_i},
+\qquad
+\norm{D^{-1}}_2=\max_{1\leqslant i\leqslant n}\abs{d_i}^{-1}.
+\]
+因此
+\[
+\kappa_2(D)=\norm{D}_2\norm{D^{-1}}_2
+=
+\left(\max_i\abs{d_i}\right)
+\left(\max_i\abs{d_i}^{-1}\right).
+\]
+又由递推
+\[
+d_i=\frac{1}{h_{21}h_{32}\cdots h_{i,i-1}},\qquad i=1,\dots,n,
+\]
+其中空乘积为 \(1\)。因此
+\[
+\boxed{
+\kappa_2(D)
+=
+\left(\max_{1\leqslant i\leqslant n}\abs{d_i}\right)
+\left(\max_{1\leqslant i\leqslant n}\abs{d_i}^{-1}\right),
+\qquad
+d_i=\frac{1}{\prod_{k=1}^{i-1}h_{k+1,k}}.
+}
+\]
+\end{solution}
+
+\item 设 \(H\in\R^{n\times n}\) 是一个上 Hessenberg 矩阵，并假定
+\(x\in\R^n\) 是 \(H\) 的对应于实特征值 \(\lambda\) 的一个特征向量。试给出一个算法计算正交矩阵
+\(Q\in\R^{n\times n}\)，使得
+\[
+Q^{\top}HQ=
+\begin{pmatrix}
+\lambda&w^{\top}\\
+0&H_1
+\end{pmatrix},
+\]
+其中 \(H_1\) 是 \((n-1)\) 阶上 Hessenberg 矩阵。
+
+\begin{solution}
+算法如下。
+
+\begin{enumerate}
+\item 取单位特征向量 \(q_1\)，即
+\[
+q_1=\frac{x}{\norm{x}_2},
+\]
+使得
+\[
+Hq_1=\lambda q_1.
+\]
+
+\item 构造正交矩阵 \(Q_0\in\R^{n\times n}\)，使其第一列为 \(q_1\)。例如可取
+\[
+Q_0=[q_1,q_2,\dots,q_n],
+\]
+其中 \(q_2,\dots,q_n\) 是 \(q_1\) 的正交补的一组标准正交基。
+
+\item 计算
+\[
+Q_0^{\top}HQ_0.
+\]
+由于 \(Hq_1=\lambda q_1\)，有
+\[
+Q_0^{\top}HQ_0
+=
+\begin{pmatrix}
+\lambda&b^{\top}\\
+0&B
+\end{pmatrix},
+\]
+其中 \(B\in\R^{(n-1)\times(n-1)}\)。
+
+\item 一般 \(B\) 不一定是上 Hessenberg 矩阵。对 \(B\) 做 Householder 相似变换，将其化为上 Hessenberg 矩阵。即求正交矩阵
+\(V\in\R^{(n-1)\times(n-1)}\)，使得
+\[
+V^{\top}BV=H_1
+\]
+为上 Hessenberg 矩阵。
+
+\item 令
+\[
+Q=Q_0
+\begin{pmatrix}
+1&0\\
+0&V
+\end{pmatrix}.
+\]
+则 \(Q\) 是正交矩阵，并且
+\[
+Q^{\top}HQ
+=
+\begin{pmatrix}
+1&0\\
+0&V^{\top}
+\end{pmatrix}
+Q_0^{\top}HQ_0
+\begin{pmatrix}
+1&0\\
+0&V
+\end{pmatrix}
+=
+\begin{pmatrix}
+\lambda&w^{\top}\\
+0&H_1
+\end{pmatrix},
+\]
+其中
+\[
+w^{\top}=b^{\top}V,
+\]
+且 \(H_1\) 是 \((n-1)\) 阶上 Hessenberg 矩阵。
+\end{enumerate}
+
+因此算法输出为
+\[
+\boxed{
+Q=Q_0
+\begin{pmatrix}
+1&0\\
+0&V
+\end{pmatrix},
+\qquad
+Q^{\top}HQ=
+\begin{pmatrix}
+\lambda&w^{\top}\\
+0&H_1
+\end{pmatrix}.
+}
+\]
+\end{solution}
+
+\item 设 \(H\) 是一个奇异的不可约上 Hessenberg 矩阵。证明：进行一次基本的 QR 迭代后，\(H\) 的零特征值将出现。
+
+\begin{solution}
+设 \(H\) 奇异，则
+\[
+\det(H)=0,
+\]
+所以 \(0\) 是 \(H\) 的特征值。
+
+对 \(H\) 进行基本的 QR 迭代。先做 QR 分解：
+\[
+H=QR,
+\]
+其中 \(Q\) 是酉矩阵，\(R\) 是上三角矩阵。然后令
+\[
+H_1=RQ.
+\]
+由于
+\[
+H_1=RQ=Q^{H}HQ,
+\]
+所以 \(H_1\) 与 \(H\) 酉相似，因而有相同特征值，特别地 \(0\) 仍是 \(H_1\) 的特征值。
+
+因为 \(H\) 是不可约上 Hessenberg 矩阵，所以其次对角元均非零。QR 迭代保持上 Hessenberg 形式，因此 \(H_1\) 也是上 Hessenberg 矩阵。
+
+又因为 \(H\) 奇异，所以 \(R\) 奇异。由于 \(R\) 是上三角矩阵，故
+\[
+r_{nn}=0.
+\]
+于是
+\[
+H_1=RQ
+\]
+的最后一行为
+\[
+(H_1)_{n,:}=(RQ)_{n,:}=r_{nn}Q_{n,:}=0.
+\]
+因此 \(H_1\) 的最后一行全为零。于是
+\[
+H_1=
+\begin{pmatrix}
+*&*&\cdots&*&*\\
+*&*&\cdots&*&*\\
+\vdots&\vdots&\ddots&\vdots&\vdots\\
+0&0&\cdots&*&*\\
+0&0&\cdots&0&0
+\end{pmatrix}.
+\]
+这样的矩阵具有零特征值 \(0\)，并且零特征值在 \(H_1\) 中已经“出现”在最后一行。
+
+因此进行一次基本 QR 迭代后，\(H\) 的零特征值将出现。
+\[
+\boxed{\text{一次基本 QR 迭代后，零特征值出现}.}
+\]
+\end{solution}
+
+\end{enumerate}
+
+\end{document}
